@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 height: 14,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -216,11 +216,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Container(
                   height: 16,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: const Color.fromRGBO(0, 0, 0, 0.04),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -269,8 +271,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(12),
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.white.withOpacity(0.03),
-                                  Colors.white.withOpacity(0.0),
+                                  const Color.fromRGBO(255, 255, 255, 0.03),
+                                  Colors.transparent,
                                 ],
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -663,15 +665,15 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.14),
+                    color: const Color.fromRGBO(255, 255, 255, 0.14),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.22),
+                      color: const Color.fromRGBO(255, 255, 255, 0.22),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
+                        color: const Color.fromRGBO(0, 0, 0, 0.12),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
