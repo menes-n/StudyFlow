@@ -86,13 +86,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
                       final d = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now().subtract(
-                          const Duration(days: 365),
-                        ),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                        initialDate: _due ?? today,
+                        firstDate: today,
+                        lastDate: DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                        ).add(const Duration(days: 365)),
                       );
                       if (d != null) setState(() => _due = d);
                     },

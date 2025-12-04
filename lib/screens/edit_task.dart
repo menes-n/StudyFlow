@@ -105,13 +105,20 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      // ensure initialDate is within allowed range
+                      DateTime initial = _due ?? today;
+                      if (initial.isBefore(today)) initial = today;
                       final d = await showDatePicker(
                         context: context,
-                        initialDate: _due ?? DateTime.now(),
-                        firstDate: DateTime.now().subtract(
-                          const Duration(days: 365),
-                        ),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                        initialDate: initial,
+                        firstDate: today,
+                        lastDate: DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                        ).add(const Duration(days: 365)),
                       );
                       if (d != null) setState(() => _due = d);
                     },

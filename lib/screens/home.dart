@@ -38,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadUserInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndOfferMigratePastTasks();
+    });
   }
 
   Future<void> _loadUserInfo() async {
@@ -48,6 +51,73 @@ class _HomeScreenState extends State<HomeScreen> {
         _username = username;
         _email = email;
       });
+    }
+  }
+
+  // Detect tasks with due dates before today and offer a one-click migration to today
+  Future<void> _checkAndOfferMigratePastTasks() async {
+    try {
+      final app = context.read<AppState>();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      final pastTasks = app.tasks.where((t) {
+        if (t.dueDateMillis == null) return false;
+        if (t.completed) return false;
+        final d = DateTime.fromMillisecondsSinceEpoch(
+          t.dueDateMillis!,
+        ).toLocal();
+        return d.isBefore(today);
+      }).toList();
+
+      if (pastTasks.isEmpty) return;
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: const Text('Geçmiş Tarihli Görevler Bulundu'),
+            content: Text(
+              '${pastTasks.length} adet geçmiş tarihe sahip görev bulundu. Hepsini bugüne taşımak ister misiniz?\n\n(Not: Bu işlem geri alınamaz.)',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('İptal'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Taşı'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (confirmed != true) return;
+
+      for (final t in pastTasks) {
+        final updated = Task(
+          id: t.id,
+          title: t.title,
+          notes: t.notes,
+          completed: t.completed,
+          dueDateMillis: today.millisecondsSinceEpoch,
+          priority: t.priority,
+          blockIds: List<String>.from(t.blockIds),
+          pomodoroMinutes: t.pomodoroMinutes,
+          pomodoroSessionsCompleted: t.pomodoroSessionsCompleted,
+          lastSessionMillis: t.lastSessionMillis,
+        );
+        await app.updateTask(updated);
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${pastTasks.length} görev bugüne taşındı.')),
+      );
+    } catch (e) {
+      // ignore errors silently — do not block the UI
     }
   }
 
