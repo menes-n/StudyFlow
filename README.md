@@ -9,19 +9,14 @@ StudyFlow, günlük çalışma düzeninizi düzenlemenize ve takip etmenize yard
 - **Genel İlerleme Göstergesi**: Tüm görevlerin tamamlanma yüzdesini ve toplam/bitmiş sayısını gösterir.
 - **Pomodoro Zamanlayıcı**: Hızlı pomodoro başlatma ve süre seçim çipleri (koyu/açık mod uyumlu).
 - **Gelişmiş Tarih Desteği**: Görev ekleme/düzenleme sırasında geçmiş tarihler seçimi engellenir; geçmiş görevleri toplu taşımak için uyarı/migration desteği bulunur.
-- **Tema Desteği**: Açık / koyu mod uyumlu renkler ve okunabilirlik düzeltmeleri.
-
-**Ekran Görüntüleri**
-
-> Yerel geliştirme ortamınızda `flutter run` ile uygulamayı çalıştırdıktan sonra ekran görüntüleri burada görüntülenecektir. (Assets altında logo ve örnek görseller eklenmişse otomatik olarak gösterilebilir.)
-
+- **Tema Desteği**: Açık / koyu mod uyumlu renkler ve okunabilirlik.
 ---
 
 **Hızlı Başlangıç**
 
 Gereksinimler:
 - `Flutter` SDK (stable kanal) kurulu olmalı.
-- Cihaz/emülatör hazır olmalı (Windows, Android, iOS, macOS, Linux desteklenir).
+- Cihaz/emülatör hazır olmalı.
 
 Kopyala ve çalıştır:
 
@@ -45,7 +40,7 @@ Not: Windows üzerinde geliştiriyorsanız hedefi belirtmek için `flutter run -
 **Geliştirici Notları**
 - `AppState` (`lib/state/app_state.dart`) uygulamanın ana durum deposudur — görevleri, rutinleri ve blokları burada saklanır.
 - Görev tarihleri `dueDateMillis` olarak tutulur — uygulama yerel zamana (`toLocal()`) dikkat ederek tarih kontrolü yapar.
-- Pomodoro ekranı: `lib/screens/adhoc_pomodoro.dart` — çipler ve koyu mod uyumu iyileştirildi.
+- Pomodoro ekranı: `lib/screens/adhoc_pomodoro.dart`.
 
 ---
 
@@ -65,9 +60,5 @@ Lütfen büyük değişiklikler için önce bir issue açın ve tasarım/arayüz
 - Koyu modda okunamayan metinler: `lib/screens/*` içinde theme-aware renkler kullanıldı; eğer hâlâ okunma sorunu varsa lütfen issue açın.
 
 ---
-
-**Lisans & İletişim**
-- Bu proje MIT lisansı ile dağıtılabilir (isteğe bağlı olarak lisans ekleyebilirim).
-- Sorular/geri bildirim için repo issues bölümünü kullanın.
 
 Teşekkürler — iyi çalışmalar ve odaklanmalar!
