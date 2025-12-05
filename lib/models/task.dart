@@ -2,6 +2,20 @@ import 'dart:convert';
 
 enum Priority { high, medium, low }
 
+// Helper extension to get Turkish display names for Priority
+extension PriorityExtension on Priority {
+  String get turkishName {
+    switch (this) {
+      case Priority.high:
+        return 'YÜKSEK';
+      case Priority.medium:
+        return 'ORTA';
+      case Priority.low:
+        return 'DÜŞÜK';
+    }
+  }
+}
+
 class Task {
   final String id;
   String title;
