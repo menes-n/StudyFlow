@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    // Validation checks
     if (_usernameCtl.text.trim().isEmpty) {
       setState(() => _errorMessage = 'Kullanıcı adı boş olamaz!');
       return;
@@ -41,14 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Clear error if validation passes
     setState(() => _errorMessage = null);
     setState(() => _loading = true);
 
     await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
 
-    // Save username and email for login screen
     await AuthService.instance.setUsername(_usernameCtl.text.trim());
     await AuthService.instance.setEmail(_emailCtl.text.trim());
     await AuthService.instance.setLoggedIn(true);
@@ -114,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        // Error message display
                         if (_errorMessage != null)
                           Container(
                             padding: const EdgeInsets.all(12),

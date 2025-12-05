@@ -106,7 +106,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Profil başlığı
                   Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -150,7 +149,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Bilgiler kartı
                   Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -250,7 +248,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // İstatistikler kartı
                   Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -308,7 +305,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Çıkış tuşu
                   ElevatedButton.icon(
                     onPressed: _logout,
                     icon: const Icon(Icons.logout),

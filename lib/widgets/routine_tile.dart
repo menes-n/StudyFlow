@@ -1,5 +1,3 @@
-// Widget: tek bir rutin öğesini gösterir.
-// İçerir: başlat/durdur zamanlayıcısı, tamam işareti, düzenle ve sil menüsü.
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -40,14 +38,12 @@ class _RoutineTileState extends State<RoutineTile> {
   }
 
   void _start() {
-    // Zamanlayıcıyı başlat ve UI'ı her saniye güncelle.
     setState(() => _running = true);
     _stopwatch.start();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
   }
 
   void _stop() {
-    // Zamanlayıcıyı durdur, geçen süreyi dakika cinsinden toplam süreye ekle ve kaydet.
     _stopwatch.stop();
     _timer?.cancel();
     final seconds = _stopwatch.elapsed.inSeconds;
@@ -61,9 +57,6 @@ class _RoutineTileState extends State<RoutineTile> {
   }
 
   Future<void> _confirmDelete() async {
-    // Defer showing the confirmation dialog to the next frame to avoid
-    // performing hit-tests or layout-sensitive operations while handling
-    // pointer events (prevents "hit test render box never laid out" errors).
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final ok = await showDialog<bool>(
@@ -94,7 +87,6 @@ class _RoutineTileState extends State<RoutineTile> {
         ? DateTime.fromMillisecondsSinceEpoch(r.lastSessionMillis!)
         : null;
 
-    // Gösterimler: başlık + küçük ilerleme çubuğu + son oturum bilgisi
     final double goalProgress = r.durationMinutes > 0
         ? (r.totalMinutes / r.durationMinutes).clamp(0.0, 1.0)
         : 0.0;
@@ -218,9 +210,6 @@ class _RoutineTileState extends State<RoutineTile> {
                             return;
                           }
                           if (v == 'edit') {
-                            // Delay navigation to the next frame to avoid hit-test/layout
-                            // timing issues when navigation is triggered from pointer
-                            // event handlers.
                             WidgetsBinding.instance.addPostFrameCallback((
                               _,
                             ) async {

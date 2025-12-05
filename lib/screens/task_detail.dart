@@ -186,7 +186,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  // mark task completed
                   final navigator = Navigator.of(context);
                   _task!.completed = true;
                   await app.updateTask(_task!);

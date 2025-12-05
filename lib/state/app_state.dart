@@ -1,4 +1,3 @@
-// Uygulama durumu: rutin listesini tutar, CRUD işlemlerini sağlar ve ilerleme hesaplar.
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/routine.dart';
@@ -25,7 +24,6 @@ class AppState extends ChangeNotifier {
     _tasks = await StorageService.loadTasks();
     _blocks = await StorageService.loadBlocks();
 
-    // Load dark mode setting
     final prefs = await SharedPreferences.getInstance();
     _darkModeEnabled = prefs.getBool('dark_mode_enabled') ?? false;
 
@@ -40,14 +38,10 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Routines
   Future<void> addRoutine(Routine r) async {
     _routines.add(r);
-    // ignore: avoid_print
-    print('AppState.addRoutine: adding id=${r.id} title=${r.title}');
     await StorageService.saveRoutines(_routines);
-    // ignore: avoid_print
-    print('AppState.addRoutine: saved, notifying listeners');
+
     notifyListeners();
   }
 
@@ -55,22 +49,18 @@ class AppState extends ChangeNotifier {
     final idx = _routines.indexWhere((x) => x.id == r.id);
     if (idx != -1) {
       _routines[idx] = r;
-      // ignore: avoid_print
-      print('AppState.updateRoutine: updating id=${r.id}');
+
       await StorageService.saveRoutines(_routines);
-      // ignore: avoid_print
-      print('AppState.updateRoutine: saved');
+
       notifyListeners();
     }
   }
 
   Future<void> deleteRoutine(String id) async {
     _routines.removeWhere((x) => x.id == id);
-    // ignore: avoid_print
-    print('AppState.deleteRoutine: deleting id=$id');
+
     await StorageService.saveRoutines(_routines);
-    // ignore: avoid_print
-    print('AppState.deleteRoutine: deleted and saved');
+
     notifyListeners();
   }
 
@@ -80,11 +70,9 @@ class AppState extends ChangeNotifier {
     return done / _routines.length;
   }
 
-  // Tasks
   Future<void> addTask(Task t) async {
     _tasks.add(t);
-    // ignore: avoid_print
-    print('AppState.addTask: id=${t.id} title=${t.title}');
+
     await StorageService.saveTasks(_tasks);
     notifyListeners();
   }
@@ -93,8 +81,7 @@ class AppState extends ChangeNotifier {
     final idx = _tasks.indexWhere((x) => x.id == t.id);
     if (idx != -1) {
       _tasks[idx] = t;
-      // ignore: avoid_print
-      print('AppState.updateTask: id=${t.id}');
+
       await StorageService.saveTasks(_tasks);
       notifyListeners();
     }
@@ -102,17 +89,14 @@ class AppState extends ChangeNotifier {
 
   Future<void> deleteTask(String id) async {
     _tasks.removeWhere((x) => x.id == id);
-    // ignore: avoid_print
-    print('AppState.deleteTask: id=$id');
+
     await StorageService.saveTasks(_tasks);
     notifyListeners();
   }
 
-  // Blocks
   Future<void> addBlock(Block b) async {
     _blocks.add(b);
-    // ignore: avoid_print
-    print('AppState.addBlock: id=${b.id} title=${b.title}');
+
     await StorageService.saveBlocks(_blocks);
     notifyListeners();
   }
@@ -121,8 +105,7 @@ class AppState extends ChangeNotifier {
     final idx = _blocks.indexWhere((x) => x.id == b.id);
     if (idx != -1) {
       _blocks[idx] = b;
-      // ignore: avoid_print
-      print('AppState.updateBlock: id=${b.id}');
+
       await StorageService.saveBlocks(_blocks);
       notifyListeners();
     }
@@ -130,13 +113,11 @@ class AppState extends ChangeNotifier {
 
   Future<void> deleteBlock(String id) async {
     _blocks.removeWhere((x) => x.id == id);
-    // ignore: avoid_print
-    print('AppState.deleteBlock: id=$id');
+
     await StorageService.saveBlocks(_blocks);
     notifyListeners();
   }
 
-  // Helper: tasks for a specific date (by dueDateMillis), excluding completed tasks
   List<Task> tasksForDate(DateTime date) {
     return _tasks.where((t) {
       if (t.dueDateMillis == null) return false;
@@ -146,7 +127,6 @@ class AppState extends ChangeNotifier {
     }).toList();
   }
 
-  // Attach a block to a task
   Future<void> addBlockToTask(String taskId, String blockId) async {
     final tIdx = _tasks.indexWhere((t) => t.id == taskId);
     if (tIdx == -1) return;

@@ -14,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Show splash for a short duration, then route based on auth state
+
     Future.delayed(const Duration(milliseconds: 900)).then((_) async {
       if (!mounted) return;
       final loggedIn = await AuthService.instance.isLoggedIn();

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../models/task.dart';
-// audio/notification packages removed — sound and notification features disabled
 
 class AdHocPomodoroScreen extends StatefulWidget {
   final Task? task;
@@ -16,29 +15,25 @@ class AdHocPomodoroScreen extends StatefulWidget {
 class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
   Timer? _timer;
   bool _isRunning = false;
-  bool _isWork = true; // true -> çalışma, false -> mola
+  bool _isWork = true;
 
   int _workMinutes = 25;
   final int _breakMinutes = 5;
   final int _longBreakMinutes = 15;
 
-  // Preset options shown in the UI for quick selection
   final List<int> _presetWorkMinutes = [15, 20, 25, 30, 45, 60];
 
   int _remainingSeconds = 0;
   int _completedPomodoros = 0;
-  // sound/notification flags removed
-
-  // audio/notification members removed
 
   @override
   void initState() {
     super.initState();
-    // If task exists, use its pomodoro minutes
+
     if (widget.task != null && widget.task!.pomodoroMinutes > 0) {
       _workMinutes = widget.task!.pomodoroMinutes;
     }
-    // initialization for audio/notifications removed
+
     _resetToMode();
   }
 
@@ -70,7 +65,7 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
           if (_isWork) {
             _completedPomodoros++;
           }
-          // flip mode but do not auto-start next session
+
           _isWork = !_isWork;
           _remainingSeconds = (_isWork ? _workMinutes : _breakMinutes) * 60;
           _triggerAlert(
@@ -128,12 +123,10 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
     _startTimer();
   }
 
-  // sound/notification toggles removed
-
   @override
   Widget build(BuildContext context) {
     final statusText = _isWork ? 'Çalışma zamanı' : 'Mola zamanı';
-    // compute total seconds for progress display depending on mode
+
     final int totalSeconds = _isWork ? (_workMinutes * 60) : _breakMinutes * 60;
     final double progress = totalSeconds > 0
         ? (1.0 - (_remainingSeconds / totalSeconds).clamp(0.0, 1.0))
@@ -146,7 +139,6 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
           child: Column(
             children: [
-              // compact header with status and small cycle indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -178,7 +170,6 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
 
               const SizedBox(height: 18),
 
-              // central circular timer
               Expanded(
                 child: Center(
                   child: SizedBox(
@@ -230,7 +221,6 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
                 ),
               ),
 
-              // presets as chips (centered on wide screens, enhanced styling)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
@@ -279,7 +269,6 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
 
               const SizedBox(height: 18),
 
-              // controls row
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -305,7 +294,6 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
 
               const SizedBox(height: 12),
 
-              // break quick actions
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

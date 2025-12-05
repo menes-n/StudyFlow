@@ -12,7 +12,6 @@ class AboutScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Başlık ve Logo
             Center(
               child: Column(
                 children: [
@@ -44,7 +43,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Açıklama Kartı
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -74,7 +72,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Özellikler Kartı
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -123,7 +120,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Teknoloji Kartı
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -152,7 +148,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Footer
             Center(
               child: Column(
                 children: [

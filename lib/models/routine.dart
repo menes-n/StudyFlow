@@ -1,4 +1,3 @@
-// `Routine` modeli: uygulamadaki çalışma rutinlerini tanımlar ve JSON serileştirme sağlar.
 import 'dart:convert';
 
 class Routine {
@@ -33,8 +32,6 @@ class Routine {
       completed: false,
     );
   }
-
-  // `fromJson` ve `toJson` modelin kalıcı depolamayla çalışmasını sağlar.
 
   factory Routine.fromJson(Map<String, dynamic> json) => Routine(
     id: json['id'] as String,

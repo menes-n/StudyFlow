@@ -13,8 +13,7 @@ class StudyFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use a pleasant fixed blue as the app seed color
-    final seed = const Color(0xFF1E88E5); // Material Blue 600
+    final seed = const Color(0xFF1E88E5);
 
     return ChangeNotifierProvider(
       create: (_) => AppState()..init(),

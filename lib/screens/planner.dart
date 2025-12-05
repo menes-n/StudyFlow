@@ -13,7 +13,7 @@ class PlannerScreen extends StatefulWidget {
 }
 
 class _PlannerScreenState extends State<PlannerScreen> {
-  int _viewMode = 0; // 0 = daily, 1 = weekly
+  int _viewMode = 0;
   DateTime _selectedDate = DateTime.now();
 
   void _openAddTask() {
@@ -79,7 +79,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
             ),
           ),
 
-          if (_viewMode == 1) // weekly strip
+          if (_viewMode == 1)
             SizedBox(
               height: 100,
               child: ListView.separated(

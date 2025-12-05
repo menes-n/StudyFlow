@@ -2,7 +2,6 @@ import 'dart:convert';
 
 enum Priority { high, medium, low }
 
-// Helper extension to get Turkish display names for Priority
 extension PriorityExtension on Priority {
   String get turkishName {
     switch (this) {
@@ -24,7 +23,7 @@ class Task {
   int? dueDateMillis;
   Priority priority;
   List<String> blockIds;
-  // Pomodoro fields
+
   int pomodoroMinutes;
   int pomodoroSessionsCompleted;
   int? lastSessionMillis;

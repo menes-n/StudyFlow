@@ -59,7 +59,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       dueDateMillis: _due?.millisecondsSinceEpoch,
       priority: _priority,
     );
-    // ignore: avoid_print
+
     print('AddTaskScreen._submit: creating ${t.title}');
     await app.addTask(t);
 
@@ -69,7 +69,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       _saved = true;
     });
 
-    // show a short success SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Görev kaydedildi'),
@@ -77,7 +76,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       ),
     );
 
-    // brief delay so user can see the success state, then close
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -124,15 +122,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     Color priorityColor(Priority p) {
       switch (p) {
         case Priority.high:
-          return const Color(0xFFD32F2F); // red
+          return const Color(0xFFD32F2F);
         case Priority.medium:
-          return const Color(0xFFF57C00); // orange
+          return const Color(0xFFF57C00);
         case Priority.low:
-          return const Color(0xFF2E7D32); // green
+          return const Color(0xFF2E7D32);
       }
     }
 
-    // Return RGB components for a priority color so we can create translucent variants
     List<int> priorityRgb(Priority p) {
       switch (p) {
         case Priority.high:
@@ -234,7 +231,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Priority chips
                         Text(
                           'Öncelik',
                           style: Theme.of(context).textTheme.labelLarge,
@@ -275,7 +271,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Quick date buttons
                         Text(
                           'Hızlı Seçim',
                           style: Theme.of(context).textTheme.labelLarge,
@@ -293,7 +288,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Date picker row
                         Row(
                           children: [
                             Icon(
@@ -342,7 +336,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Live preview
                         Text(
                           'Önizleme',
                           style: Theme.of(context).textTheme.titleSmall,

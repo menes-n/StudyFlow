@@ -27,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _register() async {
-    // Check if all fields are filled
     if (_usernameCtl.text.trim().isEmpty) {
       setState(() => _errorMessage = 'Kullanıcı adı boş olamaz!');
       return;
@@ -43,21 +42,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    // Check if passwords match
     if (_passCtl.text != _rpassCtl.text) {
       setState(() => _errorMessage = 'Parolalar eşleşmiyor!');
       return;
     }
 
-    // Clear error if validation passes
     setState(() => _errorMessage = null);
     setState(() => _loading = true);
 
-    // Placeholder registration
     await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
 
-    // Save username and email
     await AuthService.instance.setUsername(_usernameCtl.text.trim());
     await AuthService.instance.setEmail(_emailCtl.text.trim());
     await AuthService.instance.setLoggedIn(true);

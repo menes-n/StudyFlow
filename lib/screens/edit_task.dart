@@ -105,14 +105,13 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       pomodoroSessionsCompleted: widget.task.pomodoroSessionsCompleted,
       lastSessionMillis: widget.task.lastSessionMillis,
     );
-    // ignore: avoid_print
+
     print('EditTaskScreen._submit: updating ${updatedTask.title}');
     await app.updateTask(updatedTask);
 
     if (!mounted) return;
     setState(() => _isSaving = false);
 
-    // show success feedback
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Görev güncellendi'),
@@ -120,7 +119,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       ),
     );
 
-    // brief delay so user can see the success, then close
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -131,15 +129,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     Color priorityColor(Priority p) {
       switch (p) {
         case Priority.high:
-          return const Color(0xFFD32F2F); // red
+          return const Color(0xFFD32F2F);
         case Priority.medium:
-          return const Color(0xFFF57C00); // orange
+          return const Color(0xFFF57C00);
         case Priority.low:
-          return const Color(0xFF2E7D32); // green
+          return const Color(0xFF2E7D32);
       }
     }
 
-    // Return RGB components for a priority color so we can create translucent variants
     List<int> priorityRgb(Priority p) {
       switch (p) {
         case Priority.high:
@@ -241,7 +238,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Priority chips
                         Text(
                           'Öncelik',
                           style: Theme.of(context).textTheme.labelLarge,
@@ -282,7 +278,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Quick date buttons
                         Text(
                           'Hızlı Seçim',
                           style: Theme.of(context).textTheme.labelLarge,
@@ -300,7 +295,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Date picker row
                         Row(
                           children: [
                             Icon(
@@ -351,7 +345,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Live preview
                         Text(
                           'Önizleme',
                           style: Theme.of(context).textTheme.titleSmall,

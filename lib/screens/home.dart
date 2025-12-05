@@ -11,7 +11,6 @@ import '../state/app_state.dart';
 import '../models/task.dart';
 import '../services/auth_service.dart';
 
-/// Home screen with collapsible task sections and task list.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -24,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _username = 'Kullanıcı';
   String _email = 'user@example.com';
 
-  // Track which sections are expanded
   final Map<String, bool> _expandedSections = {
     'today': false,
     'tomorrow': false,
@@ -54,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Detect tasks with due dates before today and offer a one-click migration to today
   Future<void> _checkAndOfferMigratePastTasks() async {
     try {
       final app = context.read<AppState>();
@@ -116,12 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${pastTasks.length} görev bugüne taşındı.')),
       );
-    } catch (e) {
-      // ignore errors silently — do not block the UI
-    }
+    } catch (e) {}
   }
 
-  // Toggle a section and close all others
   void _toggleSection(String section) {
     setState(() {
       for (final key in _expandedSections.keys) {
@@ -131,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Build progress indicator for all tasks
   Widget _buildProgressIndicator(AppState appState) {
     final allTasks = appState.tasks;
     final completedCount = allTasks.where((t) => t.completed).length;
@@ -140,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ? 0.0
         : (completedCount / totalCount).clamp(0.0, 1.0);
 
-    // If there are no tasks, show a subtle placeholder
     if (totalCount == 0) {
       return Card(
         elevation: 2,
@@ -209,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            // Animated gradient progress bar
+
             LayoutBuilder(
               builder: (context, constraints) {
                 final width = constraints.maxWidth;
@@ -230,7 +222,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Stack(
                     children: [
-                      // Animated foreground
                       TweenAnimationBuilder<double>(
                         tween: Tween(begin: 0.0, end: progress),
                         duration: const Duration(milliseconds: 700),
@@ -263,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      // subtle gloss overlay
+
                       Positioned.fill(
                         child: IgnorePointer(
                           child: Container(
@@ -296,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
-                // small progress knob for quick visual
+
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -337,14 +328,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // Calculate date ranges
     final tomorrow = today.add(const Duration(days: 1));
     final weekEnd = today.add(const Duration(days: 6));
     final firstOfNextMonth = (now.month == 12)
         ? DateTime(now.year + 1, 1, 1)
         : DateTime(now.year, now.month + 1, 1);
 
-    // Get tasks for each section
     final todayTasks = app.tasksForDate(today);
     final tomorrowTasks = app.tasksForDate(tomorrow);
     final weekTasks = app.tasks.where((t) {
@@ -376,7 +365,6 @@ class _HomeScreenState extends State<HomeScreen> {
           d.isAfter(firstOfNextMonth);
     }).toList();
 
-    // Tamamlanan görevler
     final completedTasks = app.tasks.where((t) => t.completed).toList();
 
     return Scaffold(
@@ -472,10 +460,10 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 12),
-                // Progress indicator
+
                 _buildProgressIndicator(app),
                 const SizedBox(height: 20),
-                // Section tiles with expandable task lists
+
                 _ExpandableSectionTile(
                   title: 'BUGÜN',
                   count: todayTasks.length,
@@ -542,7 +530,6 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Expanded list-style menu shown above the centered FAB
           if (_fabExpanded)
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -586,7 +573,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-          // Main centered FAB with 'list' icon
           FloatingActionButton(
             heroTag: 'main_fab',
             onPressed: () {
@@ -658,7 +644,6 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
                     ),
                   ),
                 ),
-                // Show count (or em-dash) inside a rounded, slightly opaque white box
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -706,14 +691,13 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // High priority tasks
                 ..._buildPriorityGroup(Priority.high, const Color(0xFFE53935)),
-                // Medium priority tasks
+
                 ..._buildPriorityGroup(
                   Priority.medium,
                   const Color(0xFFFFA726),
                 ),
-                // Low priority tasks
+
                 ..._buildPriorityGroup(Priority.low, const Color(0xFF66BB6A)),
               ],
             ),

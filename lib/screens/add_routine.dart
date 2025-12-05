@@ -1,4 +1,3 @@
-// Rutin ekleme/düzenleme ekranı: formlar ve renk seçimi içerir.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/routine.dart';
@@ -40,12 +39,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   Future<void> _submit() async {
-    // Form doğrulandıktan sonra yeni bir rutin oluşturur veya mevcut rutini günceller.
     if (!_formKey.currentState!.validate()) return;
     final title = _titleCtrl.text.trim();
     final duration = int.tryParse(_durationCtrl.text) ?? 25;
     final app = Provider.of<AppState>(context, listen: false);
-    // ignore: avoid_print
+
     print(
       'AddRoutineScreen._submit: title=$title duration=$duration color=$_color isEdit=$isEdit',
     );
@@ -62,24 +60,21 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           durationMinutes: duration,
           colorValue: _color,
         );
-        // ignore: avoid_print
+
         print('AddRoutineScreen._submit: creating routine id=${r.id}');
         await app.addRoutine(r);
       }
       if (mounted) Navigator.of(context).pop();
     } catch (e, st) {
-      // Eğer widget artık mount edilmiş değilse UI öğelerine erişmeyelim.
       if (!mounted) {
-        // ignore: avoid_print
         print('Error saving routine while unmounted: $e\n$st');
         return;
       }
-      // Eğer kaydetme sırasında hata oluşursa kullanıcıya bildir ve logla.
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Rutin kaydedilirken hata: $e')));
-      // Ayrıca hata ayıklama için konsola yazalım.
-      // ignore: avoid_print
+
       print('Error saving routine: $e\n$st');
     }
   }

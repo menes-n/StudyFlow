@@ -14,7 +14,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late SharedPreferences _prefs;
   bool _isLoading = true;
 
-  // Settings values
   int _pomodoroMinutes = 25;
   int _breakMinutes = 5;
   bool _notificationsEnabled = true;
@@ -61,7 +60,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: [
-          // Pomodoro Settings
           _buildSectionHeader('Pomodoro'),
           _buildSliderTile(
             title: 'Çalışma Süresi',
@@ -86,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const Divider(),
-          // Notification Settings
+
           _buildSectionHeader('Bildirimler'),
           _buildSwitchTile(
             title: 'Bildirimleri Etkinleştir',
@@ -107,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const Divider(),
-          // Display Settings
+
           _buildSectionHeader('Görünüm'),
           _buildSwitchTile(
             title: 'Koyu Mod',
@@ -121,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const Divider(),
-          // About Section
+
           _buildSectionHeader('Hakkında'),
           Padding(
             padding: const EdgeInsets.symmetric(
