@@ -26,7 +26,7 @@ class StudyFlowApp extends StatelessWidget {
         builder: (context, appState, _) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'StudyFlow',
+            title: 'Study Flow',
             theme: _buildLightTheme(seed),
             darkTheme: _buildDarkTheme(seed),
             // Uygulama tema modunu ayarla
