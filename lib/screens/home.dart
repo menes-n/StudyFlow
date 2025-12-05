@@ -130,7 +130,18 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${pastTasks.length} görev bugüne taşındı.')),
       );
-    } catch (e) {}
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Görevleri taşırken bir hata oluştu: '
+              '${e.toString()}',
+            ),
+          ),
+        );
+      }
+    }
   }
 
   void _toggleSection(String section) {
