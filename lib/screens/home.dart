@@ -767,8 +767,9 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
             subtitle: (task.notes != null && task.notes!.isNotEmpty)
                 ? Text(task.notes!)
                 : null,
-            trailing: Row(
+            trailing: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 if (widget.showCompleteButton)
                   IconButton(
@@ -810,7 +811,7 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
                       await app.updateTask(updatedTask);
                     },
                   ),
-                const SizedBox(width: 4),
+                const SizedBox(height: 6),
                 if (!task.completed)
                   IconButton(
                     icon: const Icon(Icons.timer, color: Colors.purple),
@@ -822,7 +823,7 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
                       );
                     },
                   ),
-                const SizedBox(width: 4),
+                const SizedBox(height: 6),
                 if (!task.completed)
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.blue),
