@@ -48,7 +48,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Uygulamadan bölümü: uygulama açıklaması ve amaçları
+            // Uygulamadan bölümü: uygulama açıklaması ve amaçları. Uygullamanın amacı, kullanıcılara etkili bir görev yönetimi sistemi sunmaktır
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -78,6 +78,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
+            // Özellikler bölümü: uygulamanın sunduğu tüm işlevsel özellikler burada listelenir
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -126,6 +127,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
+            // Teknoloji bölümü: uygulamanın geliştirildiği teknoloji yığınını ve mimari bilgisi
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -154,6 +156,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
+            // Telif hakkı ve lisans bilgisi
             Center(
               child: Column(
                 children: [
