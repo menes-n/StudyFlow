@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+// Görev önceliği enum'u
 enum Priority { high, medium, low }
 
+// Priority enum'u için Türkçe isim uzantısı
 extension PriorityExtension on Priority {
   String get turkishName {
     switch (this) {
@@ -15,6 +17,7 @@ extension PriorityExtension on Priority {
   }
 }
 
+// Görev modelini temsil et
 class Task {
   final String id;
   String title;
@@ -24,6 +27,7 @@ class Task {
   Priority priority;
   List<String> blockIds;
 
+  // Pomodoro
   int pomodoroMinutes;
   int pomodoroSessionsCompleted;
   int? lastSessionMillis;
@@ -41,6 +45,7 @@ class Task {
     this.lastSessionMillis,
   }) : blockIds = blockIds ?? [];
 
+  // Yeni görev oluştur
   factory Task.create({
     required String title,
     String? notes,
@@ -56,6 +61,7 @@ class Task {
     );
   }
 
+  // JSON'dan Task nesnesi oluştur
   factory Task.fromJson(Map<String, dynamic> json) => Task(
     id: json['id'] as String,
     title: json['title'] as String,
@@ -76,6 +82,7 @@ class Task {
     lastSessionMillis: json['lastSessionMillis'] as int?,
   );
 
+  // Task nesnesini JSON'a çevir
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,
@@ -89,9 +96,11 @@ class Task {
     'lastSessionMillis': lastSessionMillis,
   };
 
+  // Task listesini string formatında kodla
   static String encodeList(List<Task> list) =>
       json.encode(list.map((e) => e.toJson()).toList());
 
+  // String formatından Task listesi oluştur
   static List<Task> decodeList(String raw) {
     final data = json.decode(raw) as List<dynamic>;
     return data.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();

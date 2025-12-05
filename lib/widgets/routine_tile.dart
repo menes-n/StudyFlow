@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/routine.dart';
 import '../screens/add_routine.dart';
 
+// Rutin kartını temsil eden widget
 class RoutineTile extends StatefulWidget {
   final Routine routine;
   final ValueChanged<Routine> onUpdate;
@@ -20,9 +21,12 @@ class RoutineTile extends StatefulWidget {
   State<RoutineTile> createState() => _RoutineTileState();
 }
 
+// Rutin kartı durum widget'ı
 class _RoutineTileState extends State<RoutineTile> {
+  // Rutin çalışıyor mu
   bool _running = false;
   late Stopwatch _stopwatch;
+  // Zamanlayıcı
   Timer? _timer;
 
   @override

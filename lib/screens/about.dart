@@ -1,10 +1,14 @@
+// Hakkında Ekranı
+
 import 'package:flutter/material.dart';
 
+// Uygulama hakkında bilgi gösterir
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Genel: Hakkında ekranı Scaffold içerir; uygulama logosu, açıklama, özellikler ve teknoloji bilgisi gösterir
     return Scaffold(
       appBar: AppBar(title: const Text('Hakkında')),
       body: SingleChildScrollView(
@@ -15,6 +19,7 @@ class AboutScreen extends StatelessWidget {
             Center(
               child: Column(
                 children: [
+                  // Uygulama logosu: görsel tanıtım ikonu
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -43,6 +48,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+            // Uygulamadan bölümü: uygulama açıklaması ve amaçları
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(

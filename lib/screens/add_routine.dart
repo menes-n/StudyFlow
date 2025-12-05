@@ -1,8 +1,11 @@
+// Rutin Ekleme/Düzenleme Ekranı
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/routine.dart';
 import '../state/app_state.dart';
 
+// Yeni rutin eklemek veya mevcut rutini düzenlemek için ekran
 class AddRoutineScreen extends StatefulWidget {
   final Routine? routine;
 
@@ -12,17 +15,23 @@ class AddRoutineScreen extends StatefulWidget {
   State<AddRoutineScreen> createState() => _AddRoutineScreenState();
 }
 
+// Rutin ekleme/düzenleme ekranı durum widget'ı
 class _AddRoutineScreenState extends State<AddRoutineScreen> {
+  // Form anahtarı
   final _formKey = GlobalKey<FormState>();
+  // Metin giriş kontrolcüleri
   final _titleCtrl = TextEditingController();
   final _durationCtrl = TextEditingController(text: '25');
+  // Seçilen renk
   int _color = Colors.indigo.toARGB32();
 
+  // Düzenleme mi yoksa ekleme mi
   bool get isEdit => widget.routine != null;
 
   @override
   void initState() {
     super.initState();
+    // Düzenleme modunda ise mevcut verileri yükle
     if (isEdit) {
       final r = widget.routine!;
       _titleCtrl.text = r.title;
@@ -33,54 +42,57 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   @override
   void dispose() {
+    // Kontrolcüleri temizle
     _titleCtrl.dispose();
     _durationCtrl.dispose();
     super.dispose();
   }
 
+  // Rutin kaydetme işlemi
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    // Form verilerini al
     final title = _titleCtrl.text.trim();
     final duration = int.tryParse(_durationCtrl.text) ?? 25;
     final app = Provider.of<AppState>(context, listen: false);
 
-    print(
-      'AddRoutineScreen._submit: title=$title duration=$duration color=$_color isEdit=$isEdit',
-    );
     try {
+      // Düzenleme veya yeni ekleme işlemi yap
       if (isEdit) {
         final r = widget.routine!;
         r.title = title;
         r.durationMinutes = duration;
         r.colorValue = _color;
+        // Güncellenmiş rutini kaydet
         await app.updateRoutine(r);
       } else {
+        // Yeni rutin oluştur
         final r = Routine.create(
           title: title,
           durationMinutes: duration,
           colorValue: _color,
         );
 
-        print('AddRoutineScreen._submit: creating routine id=${r.id}');
+        // Yeni rutini uygulama state'e ekle
         await app.addRoutine(r);
+        // Başarı ise ekrandan geri dön
       }
       if (mounted) Navigator.of(context).pop();
-    } catch (e, st) {
-      if (!mounted) {
-        print('Error saving routine while unmounted: $e\n$st');
-        return;
-      }
+    } catch (e) {
+      // Hata yakalama: kullanıcıya SnackBar ile bildir, konsola yazma
+      if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Rutin kaydedilirken hata: $e')));
-
-      print('Error saving routine: $e\n$st');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold: sayfa düzeni (AppBar, Body, Actions)
+    // AppBar: başlık ve kaydetme/güncelleme butonu
+    // Body: form alanları (başlık, süre, renk)
     return Scaffold(
       appBar: AppBar(title: Text(isEdit ? 'Rutin Düzenle' : 'Rutin Ekle')),
       body: Padding(

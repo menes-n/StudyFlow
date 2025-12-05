@@ -1,8 +1,11 @@
+// Ayarlar Ekranı
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../state/app_state.dart';
 
+// Uygulama ayarlarını yönetir
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -10,12 +13,16 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+// Ayarlar ekranı durum widget'ı
 class _SettingsScreenState extends State<SettingsScreen> {
   late SharedPreferences _prefs;
   bool _isLoading = true;
 
+  // Pomodoro ayarları: çalışma ve mola süreleri (dakika)
   int _pomodoroMinutes = 25;
   int _breakMinutes = 5;
+
+  // Bildirim ve görünüm ayarları
   bool _notificationsEnabled = true;
   bool _soundEnabled = true;
   bool _darkModeEnabled = false;
@@ -23,12 +30,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    // Ayarları depolamadan yükle
     _loadSettings();
   }
 
+  // initState açıklama: SharedPreferences'dan saklanan ayarlar yüklenir
+
+  // Depolamadan ayarları yükle: SharedPreferences'dan varsayılan/kaydedilmiş değerleri oku
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
+      // Depolanmış ayarları veya varsayılan değerleri al
       _pomodoroMinutes = _prefs.getInt('pomodoro_minutes') ?? 25;
       _breakMinutes = _prefs.getInt('break_minutes') ?? 5;
       _notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
@@ -38,6 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  // Ayarı depolamaya kaydet: int veya bool değerleri SharedPreferences'a yaz
   Future<void> _saveSetting(String key, dynamic value) async {
     if (value is int) {
       await _prefs.setInt(key, value);
@@ -48,6 +61,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Genel: Ayarlar ekranı ListView ve section başlıkları ile organize edilmiş
+    // Bölümler: Pomodoro, Bildirimler, Görünüm, Hakkında
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Ayarlar')),
@@ -60,6 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: [
+          // Pomodoro bölümü: çalışma ve mola süresi ayarları
           _buildSectionHeader('Pomodoro'),
           _buildSliderTile(
             title: 'Çalışma Süresi',
@@ -85,6 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Divider(),
 
+          // Bildirim bölümü: bildirim ve ses ayarları
           _buildSectionHeader('Bildirimler'),
           _buildSwitchTile(
             title: 'Bildirimleri Etkinleştir',
@@ -106,6 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Divider(),
 
+          // Görünüm bölümü: tema seçimi
           _buildSectionHeader('Görünüm'),
           _buildSwitchTile(
             title: 'Koyu Mod',
@@ -120,6 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Divider(),
 
+          // Hakkında bölümü: uygulama versiyonu ve açıklaması
           _buildSectionHeader('Hakkında'),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -148,6 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Bölüm başlığı widget'ı: ayarlar bölümlerini görsel olarak ayırır
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
@@ -161,6 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Switch tile widget'ı: boolean ayarları için on/off anahtar gösterir
   Widget _buildSwitchTile({
     required String title,
     required String subtitle,
@@ -174,6 +195,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Slider tile widget'ı: sayısal ayarları (dakika vb.) için kaydırma çubuğu gösterir
   Widget _buildSliderTile({
     required String title,
     required String subtitle,

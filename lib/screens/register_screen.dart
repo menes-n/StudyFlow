@@ -1,7 +1,10 @@
+// Kayıt Ekranı
+
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'home.dart';
 
+// Yeni kullanıcı kayıt ekranı
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -9,16 +12,21 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+// Kayıt ekranı durum widget'ı
 class _RegisterScreenState extends State<RegisterScreen> {
+  // Metin giriş kontrolcüleri: kullanıcı adı, e-posta, parola, parola tekrarı
   final _usernameCtl = TextEditingController();
   final _emailCtl = TextEditingController();
   final _passCtl = TextEditingController();
   final _rpassCtl = TextEditingController();
+
+  // Yüklenme ve hata durumu: buton devre dışı bırakma ve hata mesajı gösterimi
   bool _loading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
+    // Kaynakları temizle: tüm TextEditingController'ları serbest bırak
     _usernameCtl.dispose();
     _emailCtl.dispose();
     _passCtl.dispose();
@@ -26,7 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // Kayıt işlemini gerçekleştir: doğrulama, kaydetme ve yönlendirme
   Future<void> _register() async {
+    // Form doğrulaması: boş alan kontrolü
     if (_usernameCtl.text.trim().isEmpty) {
       setState(() => _errorMessage = 'Kullanıcı adı boş olamaz!');
       return;
@@ -42,22 +52,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    // Parola eşleştirme kontrolü
     if (_passCtl.text != _rpassCtl.text) {
       setState(() => _errorMessage = 'Parolalar eşleşmiyor!');
       return;
     }
 
+    // Hata temizleme ve yükleme durumunu aktif etme
     setState(() => _errorMessage = null);
     setState(() => _loading = true);
 
+    // Kayıt animasyonu için küçük gecikme
     await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
 
+    // Kullanıcı bilgilerini SharedPreferences üzerinden sakla
     await AuthService.instance.setUsername(_usernameCtl.text.trim());
     await AuthService.instance.setEmail(_emailCtl.text.trim());
     await AuthService.instance.setLoggedIn(true);
 
     if (!mounted) return;
+    // Ana ekrana git ve kayıt ekranını geri dönüş yığınına ekleme
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,
@@ -66,6 +81,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Genel: bu ekran bir Scaffold içerir; AppBar geri butonu, body ise formu barındırır
+    // Hata konteyneri, dört metin alanı ve kayıt butonu gösterilir
     final color = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(

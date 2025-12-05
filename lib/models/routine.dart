@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// Günlük rutin modelini temsil et
 class Routine {
   String id;
   String title;
@@ -19,6 +20,7 @@ class Routine {
     this.lastSessionMillis,
   });
 
+  // Yeni rutin oluştur
   factory Routine.create({
     required String title,
     required int durationMinutes,
@@ -33,6 +35,7 @@ class Routine {
     );
   }
 
+  // JSON'dan Routine nesnesi oluştur
   factory Routine.fromJson(Map<String, dynamic> json) => Routine(
     id: json['id'] as String,
     title: json['title'] as String,
@@ -43,6 +46,7 @@ class Routine {
     lastSessionMillis: json['lastSessionMillis'] as int?,
   );
 
+  // Routine nesnesini JSON'a çevir
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,
@@ -53,8 +57,10 @@ class Routine {
     'lastSessionMillis': lastSessionMillis,
   };
 
+  // Routine nesnesini string formatında kodla
   String encode() => json.encode(toJson());
 
+  // String formatından Routine nesnesi oluştur
   static Routine decode(String jsonStr) =>
       Routine.fromJson(json.decode(jsonStr) as Map<String, dynamic>);
 }

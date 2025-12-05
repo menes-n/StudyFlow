@@ -1,3 +1,5 @@
+// Planlayıcı Ekranı
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +7,7 @@ import '../state/app_state.dart';
 import '../models/task.dart';
 import 'add_task.dart';
 
+// Görevleri tarihe göre planlamak için ekran
 class PlannerScreen extends StatefulWidget {
   const PlannerScreen({super.key});
 
@@ -12,26 +15,35 @@ class PlannerScreen extends StatefulWidget {
   State<PlannerScreen> createState() => _PlannerScreenState();
 }
 
+// Planlayıcı ekranı durum widget'ı
 class _PlannerScreenState extends State<PlannerScreen> {
+  // Görünüm modu (takvim, liste vb.)
   int _viewMode = 0;
+  // Seçilen tarih
   DateTime _selectedDate = DateTime.now();
 
+  // Yeni görev ekleme ekranını aç
   void _openAddTask() {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const AddTaskScreen()));
   }
 
+  // _openAddTask: Yeni görev ekleme akışını başlatır (AddTaskScreen'i açar)
+
   @override
   Widget build(BuildContext context) {
+    // Planner Scaffold: tarih seçimi, görünüm modu ve görev listesi
     final app = context.watch<AppState>();
 
     final tasksForDate = app.tasksForDate(_selectedDate);
 
+    // Ekranın UI'ı oluştur
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planlayıcı'),
         actions: [
+          // Debug alanı: geliştirici modunda görev sayısını gösterir
           if (kDebugMode)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -84,6 +96,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
               height: 100,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                // Haftalık görünümde gün kartlarını göster
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
                   vertical: 10,
@@ -98,6 +111,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                       d.year == _selectedDate.year &&
                       d.month == _selectedDate.month &&
                       d.day == _selectedDate.day;
+                  // Seçilen tarıh için görev sayısını al
                   final count = app.tasksForDate(d).length;
                   return GestureDetector(
                     onTap: () => setState(() => _selectedDate = d),
@@ -155,7 +169,8 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
           Expanded(
             child: tasksForDate.isEmpty
-                ? Center(child: Text('Bu tarihte görev yok'))
+                ? // Görev yoksa mesaj göster
+                  Center(child: Text('Bu tarihte görev yok'))
                 : ListView.separated(
                     padding: const EdgeInsets.all(8),
                     itemCount: tasksForDate.length,

@@ -1,12 +1,18 @@
+// Giriş/Kayıt Ekranı Seçimi
+
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
+// Giriş veya kayıt seçeneğini gösterir
 class AuthEntry extends StatelessWidget {
   const AuthEntry({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Giriş/Kayıt seçim ekranı Scaffold: logo ve iki seçenek
+    // - Logo: uygulama görsel tanıtımı
+    // - Butonlar: kullanıcıyı giriş veya kayıt ekranına yönlendirir
     final color = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: const Text('Giriş / Kayıt')),
@@ -17,6 +23,7 @@ class AuthEntry extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Uygulama logosu gösterimi
                 CircleAvatar(
                   radius: 100,
                   backgroundColor: Colors.transparent,
@@ -47,6 +54,7 @@ class AuthEntry extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // Giriş butonu: Login ekranına yönlendirir
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -63,6 +71,7 @@ class AuthEntry extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                // Kayıt butonu: Register ekranına yönlendirir
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

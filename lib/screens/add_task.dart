@@ -1,8 +1,11 @@
+// Yeni Görev Ekleme Ekranı
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../state/app_state.dart';
 
+// Yeni görev eklemek için ekran
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
 
@@ -10,22 +13,32 @@ class AddTaskScreen extends StatefulWidget {
   State<AddTaskScreen> createState() => _AddTaskScreenState();
 }
 
+// Yeni görev ekleme ekranı durum widget'ı
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  // Form anahtarı
   final _formKey = GlobalKey<FormState>();
+  // Metin giriş kontrolcüleri
   final _titleCtl = TextEditingController();
   final _notesCtl = TextEditingController();
+  // Görev önceliği
   Priority _priority = Priority.medium;
+  // Bitiş tarihi
   DateTime? _due;
+  // Durum
   bool _isSaving = false;
   bool _saved = false;
 
   @override
   void initState() {
     super.initState();
+    // Metin alanındaki değişiklikleri dinle
     _titleCtl.addListener(_onPreviewUpdate);
     _notesCtl.addListener(_onPreviewUpdate);
   }
 
+  // Metin alanı dinleme: önizlemede yapılacak güncellemeleri tetikler
+
+  // Uzun metni kısalt
   String _truncate(String text, int maxLen) {
     if (text.length <= maxLen) return text;
     return '${text.substring(0, maxLen - 1)}…';
@@ -33,6 +46,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   void dispose() {
+    // Dinleyicileri kaldır ve kontrolcüleri temizle
     _titleCtl.removeListener(_onPreviewUpdate);
     _notesCtl.removeListener(_onPreviewUpdate);
     _titleCtl.dispose();
@@ -40,19 +54,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
+  // Önizlemeyi güncelle
   void _onPreviewUpdate() {
     if (!mounted) return;
     setState(() {});
   }
 
+  // Görev kaydetme işlemi
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    // Kaydediliyor durumunu ayarla
     setState(() {
       _isSaving = true;
       _saved = false;
     });
 
     final app = Provider.of<AppState>(context, listen: false);
+    // Yeni görev oluştur
     final t = Task.create(
       title: _titleCtl.text.trim(),
       notes: _notesCtl.text.trim().isEmpty ? null : _notesCtl.text.trim(),
@@ -60,7 +78,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       priority: _priority,
     );
 
-    print('AddTaskScreen._submit: creating ${t.title}');
+    // Görevi uygulama state'e ekle
     await app.addTask(t);
 
     if (!mounted) return;
@@ -69,6 +87,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       _saved = true;
     });
 
+    // Başarı mesajı göster
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Görev kaydedildi'),
@@ -78,16 +97,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
+    // Ekrandan geri dön
     Navigator.of(context).pop();
   }
 
+  // Hızlı tarih seçme butonları
   Widget _quickDateButton(String label, int daysOffset) {
     final now = DateTime.now();
+    // Hedef tarihi hesapla
     final targetDate = DateTime(
       now.year,
       now.month,
       now.day,
     ).add(Duration(days: daysOffset));
+    // Bu tarih seçili mi kontrol et
     final isSelected =
         _due != null &&
         _due!.year == targetDate.year &&
@@ -106,6 +129,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           width: isSelected ? 2 : 1,
         ),
       ),
+      // Tarih seçildiğinde state'i güncelle
       onPressed: () => setState(() => _due = targetDate),
       child: Text(
         label,
@@ -119,6 +143,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold yapısı: AppBar, Body ve gerekiyorsa FAB içerir
+    // - AppBar: sayfa başlığı, geri navigasyon
+    // - Body: görev formu ve önizleme alanı
+    // - FAB/Buttons: kaydetme/iptal eylemleri
+    // Önceliğe göre renk döndür
     Color priorityColor(Priority p) {
       switch (p) {
         case Priority.high:

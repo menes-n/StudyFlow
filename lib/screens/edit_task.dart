@@ -1,8 +1,11 @@
+// Görev Düzenleme Ekranı
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../state/app_state.dart';
 
+// Mevcut görevi düzenlemek için ekran
 class EditTaskScreen extends StatefulWidget {
   final Task task;
 
@@ -12,10 +15,14 @@ class EditTaskScreen extends StatefulWidget {
   State<EditTaskScreen> createState() => _EditTaskScreenState();
 }
 
+// Görev düzenleme ekranı durum widget'ı
 class _EditTaskScreenState extends State<EditTaskScreen> {
+  // Form anahtarı
   final _formKey = GlobalKey<FormState>();
+  // Metin giriş kontrolcüleri
   late TextEditingController _titleCtl;
   late TextEditingController _notesCtl;
+  // Görev bilgileri
   late Priority _priority;
   late DateTime? _due;
   bool _isSaving = false;
@@ -23,16 +30,20 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   @override
   void initState() {
     super.initState();
+    // Kontrolcüleri mevcut görev verileriyle başlat
     _titleCtl = TextEditingController(text: widget.task.title);
     _notesCtl = TextEditingController(text: widget.task.notes ?? '');
     _priority = widget.task.priority;
+    // Bitiş tarihini milliseconds'ten DateTime'a dönüştür
     _due = widget.task.dueDateMillis != null
         ? DateTime.fromMillisecondsSinceEpoch(widget.task.dueDateMillis!)
         : null;
+    // Metin alanındaki değişiklikleri dinle
     _titleCtl.addListener(_onPreviewUpdate);
     _notesCtl.addListener(_onPreviewUpdate);
   }
 
+  // Uzun metni kısalt
   String _truncate(String text, int maxLen) {
     if (text.length <= maxLen) return text;
     return '${text.substring(0, maxLen - 1)}…';
@@ -40,6 +51,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
 
   @override
   void dispose() {
+    // Dinleyicileri kaldır ve kontrolcüleri temizle
     _titleCtl.removeListener(_onPreviewUpdate);
     _notesCtl.removeListener(_onPreviewUpdate);
     _titleCtl.dispose();
@@ -47,11 +59,13 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     super.dispose();
   }
 
+  // Önizlemeyi güncelle
   void _onPreviewUpdate() {
     if (!mounted) return;
     setState(() {});
   }
 
+  // Hızlı tarih seçme butonları
   Widget _quickDateButton(String label, int daysOffset) {
     final now = DateTime.now();
     final targetDate = DateTime(
@@ -106,7 +120,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       lastSessionMillis: widget.task.lastSessionMillis,
     );
 
-    print('EditTaskScreen._submit: updating ${updatedTask.title}');
+    // Güncelleme isteği: uygulama durumuna güncellenmiş görevi gönder
     await app.updateTask(updatedTask);
 
     if (!mounted) return;
@@ -126,6 +140,10 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Scaffold yapısı: AppBar, Body ve eylem butonlarını içerir
+    // - AppBar: sayfa başlığı ve navigasyon
+    // - Body: düzenleme formu ve önizleme
+    // - SnackBar / Navigator: işlem sonrası geri dönüşler
     Color priorityColor(Priority p) {
       switch (p) {
         case Priority.high:

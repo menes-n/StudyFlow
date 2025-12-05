@@ -1,8 +1,11 @@
+// Pomodoro Zamanlayıcısı Ekranı
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 
+// Pomodoro tekniği için zamanlayıcı ekranı
 class AdHocPomodoroScreen extends StatefulWidget {
   final Task? task;
 
@@ -12,17 +15,26 @@ class AdHocPomodoroScreen extends StatefulWidget {
   State<AdHocPomodoroScreen> createState() => _AdHocPomodoroScreenState();
 }
 
+// Pomodoro ekranı durum widget'ı
 class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
+  // Zamanlayıcı: periyodik olarak kalan süreyi azaltmak için kullanılır
   Timer? _timer;
+
+  // Durum bayrakları
+  // _isRunning: zamanlayıcının aktif olup olmadığı
   bool _isRunning = false;
+  // _isWork: şu an çalışma (true) mi yoksa mola (false) mı
   bool _isWork = true;
 
+  // Pomodoro süreleri (dakika cinsinden)
   int _workMinutes = 25;
   final int _breakMinutes = 5;
   final int _longBreakMinutes = 15;
 
+  // Önceden ayarlanmış çalışma süreleri (hızlı seçim için)
   final List<int> _presetWorkMinutes = [15, 20, 25, 30, 45, 60];
 
+  // Kalan süre (saniye) ve tamamlanan pomodoro sayısı
   int _remainingSeconds = 0;
   int _completedPomodoros = 0;
 
@@ -30,19 +42,27 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
   void initState() {
     super.initState();
 
+    // Görev için özel pomodoro süresi var ise kullan
     if (widget.task != null && widget.task!.pomodoroMinutes > 0) {
       _workMinutes = widget.task!.pomodoroMinutes;
     }
 
+    // Zamanlayıcıyı sıfırla
     _resetToMode();
   }
 
+  // initState açıklama: görev bazlı pref ayarları okunur ve zamanlayıcı başlangıç durumu hazırlanır
+
   @override
   void dispose() {
+    // Zamanlayıcıyı iptal et
     _timer?.cancel();
     super.dispose();
   }
 
+  // dispose açıklama: ekran kapatılırken timer iptal edilir ve kaynaklar temizlenir
+
+  // Zamanlayıcıyı mod ayarlarına göre sıfırla
   void _resetToMode() {
     _remainingSeconds = (_isWork ? _workMinutes : _breakMinutes) * 60;
     _isRunning = false;
@@ -50,9 +70,11 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
     setState(() {});
   }
 
+  // Zamanlayıcıyı başlat
   void _startTimer() {
     if (_isRunning) return;
     setState(() => _isRunning = true);
+    // Her saniyede bir kalan süreyi azalt
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       setState(() {
@@ -83,6 +105,8 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
     setState(() => _isRunning = false);
   }
 
+  // _pauseTimer: Zamanlayıcıyı geçici durdurur
+
   void _toggleStartPause() {
     if (_isRunning) {
       _pauseTimer();
@@ -91,9 +115,13 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
     }
   }
 
+  // _toggleStartPause: Başlat/Durdur butonunun davranışı
+
   void _resetPressed() {
     _resetToMode();
   }
+
+  // _resetPressed: mevcut moda göre sayaçı sıfırlar (çalışma/mola)
 
   String _format(int seconds) {
     final m = seconds ~/ 60;
@@ -106,6 +134,8 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
       SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
+
+  // _triggerAlert: Kullanıcıyı bilgilendirmek için kısa SnackBar mesajı gösterir
 
   void _startShortBreak() {
     _timer?.cancel();
@@ -132,6 +162,7 @@ class _AdHocPomodoroScreenState extends State<AdHocPomodoroScreen> {
         ? (1.0 - (_remainingSeconds / totalSeconds).clamp(0.0, 1.0))
         : 0.0;
 
+    // Pomodoro ekranı Scaffold: sayaç, durum ve kontrol butonları
     return Scaffold(
       appBar: AppBar(title: const Text('Hızlı Pomodoro')),
       body: SafeArea(

@@ -1,7 +1,10 @@
+// Giriş Ekranı
+
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'home.dart';
 
+// Kullanıcı giriş yapmasını sağlayan ekran
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -9,22 +12,29 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+// Giriş ekranı durum widget'ı
 class _LoginScreenState extends State<LoginScreen> {
+  // Metin alanları için kontrolcüler: kullanıcı adı, e-posta, parola
   final _usernameCtl = TextEditingController();
   final _emailCtl = TextEditingController();
   final _passCtl = TextEditingController();
+
+  // Yüklenme ve hata durumu: buton devre dışı bırakma ve hata mesajı gösterimi
   bool _loading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
+    // Kaynakları temizle: TextEditingController'ları serbest bırak
     _usernameCtl.dispose();
     _emailCtl.dispose();
     _passCtl.dispose();
     super.dispose();
   }
 
+  // Giriş işlemini gerçekleştir: doğrulama, local kaydetme ve yönlendirme
   Future<void> _login() async {
+    // Form doğrulaması: boş alan kontrolü
     if (_usernameCtl.text.trim().isEmpty) {
       setState(() => _errorMessage = 'Kullanıcı adı boş olamaz!');
       return;
@@ -40,17 +50,21 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    // Hata temizleme ve yükleme durumunu aktif etme
     setState(() => _errorMessage = null);
     setState(() => _loading = true);
 
+    // Küçük bir gecikme ile giriş animasyonu hissettir
     await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
 
+    // Kullanıcı bilgilerini SharedPreferences üzerinden sakla
     await AuthService.instance.setUsername(_usernameCtl.text.trim());
     await AuthService.instance.setEmail(_emailCtl.text.trim());
     await AuthService.instance.setLoggedIn(true);
 
     if (!mounted) return;
+    // Ana ekrana git ve bu ekranı geri dönüş yığınına ekleme
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,
@@ -59,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Genel: bu ekran bir Scaffold içerir; AppBar geri butonu, body ise formu barındırır
     final color = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(
@@ -111,6 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
+                        // Eğer bir hata mesajı varsa burada gösterilir
                         if (_errorMessage != null)
                           Container(
                             padding: const EdgeInsets.all(12),
@@ -136,6 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
+
+                        // Kullanıcı adı alanı
                         TextField(
                           controller: _usernameCtl,
                           decoration: const InputDecoration(
@@ -145,6 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.text,
                         ),
                         const SizedBox(height: 12),
+
+                        // E-posta alanı
                         TextField(
                           controller: _emailCtl,
                           decoration: const InputDecoration(
@@ -154,6 +174,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 12),
+
+                        // Parola alanı (gizli)
                         TextField(
                           controller: _passCtl,
                           decoration: const InputDecoration(
@@ -163,6 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                         ),
                         const SizedBox(height: 20),
+
+                        // Giriş butonu: _login metodunu tetikler, yükleme gösterir
                         SizedBox(
                           width: double.infinity,
                           height: 48,
@@ -186,6 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
+
+                        // Parola unutma bağlantısı (henüz implement edilmedi)
                         TextButton(
                           onPressed: () {},
                           child: const Text('Parolanızı mı unuttunuz?'),

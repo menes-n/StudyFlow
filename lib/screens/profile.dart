@@ -1,9 +1,12 @@
+// Profil Ekranı
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../state/app_state.dart';
 import 'auth_entry.dart';
 
+// Kullanıcı profil bilgilerini gösterir
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -11,10 +14,14 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+// Profil ekranı durum widget'ı
 class _ProfileScreenState extends State<ProfileScreen> {
+  // Kullanıcı verilerini asenkron olarak getiren Future
   late Future<Map<String, String>> _userDataFuture;
+  // Metin giriş kontrolcüleri: profil düzenleme formu için
   late TextEditingController _usernameCtl;
   late TextEditingController _emailCtl;
+  // Düzenleme modu: true ise form alanları düzenlenebilir olur
   bool _isEditing = false;
 
   @override
@@ -22,22 +29,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _usernameCtl = TextEditingController();
     _emailCtl = TextEditingController();
+    // Kullanıcı verilerini yükle
     _userDataFuture = _loadUserData();
   }
 
+  // initState açıklama: kontrolcüler başlatılır ve mevcut kullanıcı verileri yüklenir
+
+  // Depolamadan kullanıcı verilerini yükle
   Future<Map<String, String>> _loadUserData() async {
+    // Kullanıcı bilgilerini depolamadan al
     final username = await AuthService.instance.getUsername();
     final email = await AuthService.instance.getEmail();
+    // Kontrolcüleri doldur
     _usernameCtl.text = username;
     _emailCtl.text = email;
     return {'username': username, 'email': email};
   }
 
+  // _loadUserData: SharedPreferences'dan kullanıcı bilgilerini okur ve kontrolcüleri günceller
+
+  // Profili kaydet
   Future<void> _saveProfile() async {
+    // Güncellenmiş verileri depolamaya kaydet
     await AuthService.instance.setUsername(_usernameCtl.text);
     await AuthService.instance.setEmail(_emailCtl.text);
 
     if (!mounted) return;
+    // Başarı mesajı göster
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Profil güncellendi'),
@@ -45,10 +63,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
+    // Düzenleme modundan çık
     setState(() => _isEditing = false);
+    // Verileri yeniden yükle
     _userDataFuture = _loadUserData();
   }
 
+  // _saveProfile: Girilen bilgileri kalıcı depolamaya kaydeder ve kullanıcıya bildirim gösterir
+
+  // Çıkış işlemi
   Future<void> _logout() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -78,6 +101,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // _logout: Kullanıcıdan onay alır, çıkış yapar ve yetkilendirme giriş ekranına yönlendirir
+
   @override
   void dispose() {
     _usernameCtl.dispose();
@@ -87,6 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Profil ekranı Scaffold: kullanıcı bilgileri ve eylemler
+    // Body: profil kartı, düzenleme formları ve çıkış butonu
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
       body: FutureBuilder<Map<String, String>>(

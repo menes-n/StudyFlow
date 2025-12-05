@@ -1,3 +1,5 @@
+// Ana Ekran - Görevleri ve rutinleri gösterir
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'adhoc_pomodoro.dart';
@@ -11,6 +13,7 @@ import '../state/app_state.dart';
 import '../models/task.dart';
 import '../services/auth_service.dart';
 
+// Uygulamanın ana ekranı
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,11 +21,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+// Ana ekran durum widget'ı
 class _HomeScreenState extends State<HomeScreen> {
+  // FAB (Floating Action Button) genişletilmiş mi
   bool _fabExpanded = false;
+  // Kullanıcı bilgileri
   String _username = 'Kullanıcı';
   String _email = 'user@example.com';
 
+  // Bölümlerin genişletilme durumları
   final Map<String, bool> _expandedSections = {
     'today': false,
     'tomorrow': false,
@@ -35,16 +42,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Kullanıcı bilgilerini yükle
     _loadUserInfo();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndOfferMigratePastTasks();
     });
   }
 
+  // initState içinde kısa açıklama: kullanıcı bilgileri ve geçmiş görev kontrolü başlatılır
+
+  // Kullanıcı bilgilerini depolamadan yükle
   Future<void> _loadUserInfo() async {
+    // Depolamadan kullanıcı bilgilerini al
     final username = await AuthService.instance.getUsername();
     final email = await AuthService.instance.getEmail();
     if (mounted) {
+      // Arayüzü güncelle
       setState(() {
         _username = username;
         _email = email;
@@ -52,12 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Geçmiş tarihe sahip görevleri kontrol et ve taşıyı teklif et
   Future<void> _checkAndOfferMigratePastTasks() async {
     try {
       final app = context.read<AppState>();
       final now = DateTime.now();
+      // Bugünün başını al
       final today = DateTime(now.year, now.month, now.day);
 
+      // Geçmiş tarihe sahip tamamlanmamış görevleri filtrele
       final pastTasks = app.tasks.where((t) {
         if (t.dueDateMillis == null) return false;
         if (t.completed) return false;
@@ -69,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (pastTasks.isEmpty) return;
 
+      // Kullanıcıdan geçmiş görevleri bugüne taşıyıp taşımayacağını sor
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) {
@@ -124,6 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
+  // Bölüm genişletme işlemi: sadece verilen bölümü açık/kapalı yapar
 
   Widget _buildProgressIndicator(AppState appState) {
     final allTasks = appState.tasks;
@@ -324,6 +343,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Ana ekran Scaffold: AppBar, body (bölümler, listeler) ve FAB
+    // Body içinde görev bölümleri (bugün, yarın, hafta vb.) render edilir
     final app = context.watch<AppState>();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
