@@ -249,7 +249,9 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                   aspectRatio: cols / rows,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.all(6),
@@ -280,7 +282,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha: 0.2),
                                     blurRadius: 4,
                                   ),
                                 ],
@@ -307,7 +309,9 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                                   borderRadius: BorderRadius.circular(6),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.12),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.12,
+                                      ),
                                       blurRadius: 3,
                                     ),
                                   ],
@@ -337,7 +341,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurfaceVariant
-                                          .withOpacity(0.02),
+                                          .withValues(alpha: 0.02),
                                       width: 0.5,
                                     ),
                                   ),
@@ -361,12 +365,12 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _running ? null : _startGame,
+                    onLongPress: null,
                     child: Text(
                       _running
                           ? 'Oyun Sürüyor'
                           : (_gameOver ? 'Tekrar Oyna' : 'Başlat'),
                     ),
-                    onLongPress: null,
                   ),
                 ),
                 const SizedBox(width: 8),
