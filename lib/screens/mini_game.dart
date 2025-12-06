@@ -4,12 +4,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Yılan Oyunu (basic snake)
-// - Swipe ile yön kontrolü
-// - Elma yedikçe uzar
-// - Kenarlara veya kendine çarptığında oyun biter
-
 enum _Dir { up, down, left, right }
+
+// Küçük bir yılan oyunu (Mini Game)
+// - Bu dosya oyunun mantığını, çizimini ve kontrol düğmelerini içerir.
+// - Skorlar `SharedPreferences` ile saklanır (son skor ve en yüksek skor).
+// - Oyun ızgarası `rows x cols` olarak tanımlanır ve yılan kare kare hareket eder.
 
 class MiniGameScreen extends StatefulWidget {
   const MiniGameScreen({super.key});
@@ -26,7 +26,6 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   Timer? _timer;
   final Random _rand = Random();
 
-  // Snake represented as list of cells (row, col). head = first element.
   List<Point<int>> _snake = [];
   Point<int> _apple = const Point(0, 0);
   _Dir _dir = _Dir.right;
@@ -38,34 +37,60 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   @override
   void initState() {
     super.initState();
+    // Başlangıçta oyun durumu sıfırlanır ve kaydedilmiş skorlar yüklenir
     _resetGame();
     _loadScores();
   }
 
   Future<void> _loadScores() async {
+    // SharedPreferences'tan yüksek skoru yükler (varsa)
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (!mounted) return;
       setState(() {
         _highScore = prefs.getInt('mini_high_score') ?? 0;
       });
-    } catch (_) {}
+    } catch (e, st) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Skor yüklenirken hata oluştu: $e')),
+          );
+        } else {
+          debugPrint('Skor yüklenirken hata: $e\n$st');
+        }
+      });
+    }
   }
 
   Future<void> _saveScores() async {
+    // Mevcut skoru kaydeder, gerekirse en yüksek skoru günceller
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('mini_last_score', _score);
       final existing = prefs.getInt('mini_high_score') ?? 0;
       if (_score > existing) {
         await prefs.setInt('mini_high_score', _score);
+        if (!mounted) return;
         setState(() {
           _highScore = _score;
         });
       }
-    } catch (_) {}
+    } catch (e, st) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Skor kaydedilirken hata oluştu: $e')),
+          );
+        } else {
+          debugPrint('Skor kaydedilirken hata: $e\n$st');
+        }
+      });
+    }
   }
 
   void _resetGame() {
+    // Oyun durumunu başlangıca döndürür
     _timer?.cancel();
     _snake = [Point(rows ~/ 2, cols ~/ 2), Point(rows ~/ 2, cols ~/ 2 - 1)];
     _dir = _Dir.right;
@@ -77,9 +102,10 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   }
 
   void _startGame() {
+    // Oyunu başlatır (zaten çalışıyorsa hiçbir şey yapmaz)
     if (_running) return;
-    // If the previous game ended, reset the board first so the snake
-    // doesn't remain in a collided position and immediately end again.
+
+    // Oyun bittiyse önce sıfırla
     if (_gameOver) {
       _resetGame();
     }
@@ -90,6 +116,8 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   }
 
   void _placeApple() {
+    // Elma rastgele bir hücreye yerleştirilir; yılanın kapladığı hücrelerin
+    // dışında bir hücre seçilene kadar tekrar denenir.
     while (true) {
       final r = _rand.nextInt(rows);
       final c = _rand.nextInt(cols);
@@ -102,6 +130,8 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   }
 
   void _tick() {
+    // Oyun döngüsü: her tick'te yılanın başını yeni konuma taşır,
+    // çarpışma/hücre sınırı kontrolü yapar ve elma yenmişse büyütür.
     if (!_running) return;
 
     final head = _snake.first;
@@ -121,7 +151,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
         break;
     }
 
-    // Check collisions with walls
+    // Kenara çarpma kontrolü
     if (newHead.x < 0 ||
         newHead.x >= rows ||
         newHead.y < 0 ||
@@ -130,36 +160,37 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
       return;
     }
 
-    // Check self collision
+    // Kendi üzerine çarpma kontrolü
     if (_snake.contains(newHead)) {
       _endGame();
       return;
     }
 
-    // Move
     setState(() {
       _snake.insert(0, newHead);
       if (newHead == _apple) {
+        // Elma yenildi: skor artar ve yeni elma yerleştirilir
         _score += 1;
         _placeApple();
-        // don't remove tail (grow)
       } else {
+        // Hareket: kuyruğu kaldırarak ilerle
         _snake.removeLast();
       }
     });
   }
 
   void _endGame() {
+    // Oyun sonlandırma: zamanlayıcı iptal edilir ve skor kaydedilir
     _timer?.cancel();
     _running = false;
     _gameOver = true;
-    // Save scores when game ends
+
     _saveScores();
     setState(() {});
   }
 
   void _changeDir(_Dir d) {
-    // Prevent reversing directly
+    // Zıt yön geçişlerini engeller (ör. sola giderken sağa dönme)
     if ((_dir == _Dir.left && d == _Dir.right) ||
         (_dir == _Dir.right && d == _Dir.left) ||
         (_dir == _Dir.up && d == _Dir.down) ||
@@ -190,6 +221,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
   }
 
   Widget _controlButton(IconData icon, VoidCallback onPressed) {
+    // Ekrandaki yön düğmeleri için ortak stil
     return Material(
       color: Theme.of(context).colorScheme.primary,
       shape: const CircleBorder(),
@@ -208,6 +240,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Ana görünüm: skor göstergesi, oyun alanı ve kontrol düğmeleri
     return Scaffold(
       appBar: AppBar(title: const Text('Yılan Oyunu')),
       body: Padding(
@@ -263,13 +296,8 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                         final cellH = boardH / rows;
                         const cellMargin = 2.0;
 
-                        // Build background grid cells (light) - optional
                         List<Widget> stackChildren = [];
 
-                        // Optional subtle grid background (not each cell widget heavy)
-                        // Draw snake segments and apple as positioned widgets
-
-                        // Apple (discrete position)
                         stackChildren.add(
                           Positioned(
                             left: _apple.y * cellW + cellMargin,
@@ -291,7 +319,6 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                           ),
                         );
 
-                        // Snake segments (head first)
                         for (int i = 0; i < _snake.length; i++) {
                           final seg = _snake[i];
                           final isHead = i == 0;
@@ -321,8 +348,6 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                           );
                         }
 
-                        // Optionally draw faint grid lines using positioned containers
-                        // We'll add lightweight cell borders to hint grid
                         for (int r = 0; r < rows; r++) {
                           for (int c = 0; c < cols; c++) {
                             stackChildren.add(
@@ -336,7 +361,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                                   decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(3),
-                                    // subtle border
+
                                     border: Border.all(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -382,7 +407,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
             ),
 
             const SizedBox(height: 8),
-            // Eşit aralıklı 3x3 ızgara içinde yön tuşları
+
             Center(
               child: SizedBox(
                 width: 220,

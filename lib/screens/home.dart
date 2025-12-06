@@ -566,7 +566,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Mini game quick access card
+                // Yılan oyunu hızlı erişim kartı
                 Center(
                   child: GestureDetector(
                     onTap: () {
