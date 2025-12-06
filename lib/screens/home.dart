@@ -8,6 +8,7 @@ import 'edit_task.dart';
 import 'profile.dart';
 import 'settings.dart';
 import 'about.dart';
+import 'mini_game.dart';
 import 'auth_entry.dart';
 import '../state/app_state.dart';
 import '../models/task.dart';
@@ -459,6 +460,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               const Divider(),
+              ListTile(
+                leading: const Icon(Icons.videogame_asset),
+                title: const Text('Mini Oyun'),
+                onTap: () async {
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  await Future.delayed(const Duration(milliseconds: 200));
+                  if (!mounted) return;
+                  navigator.push(
+                    MaterialPageRoute(builder: (_) => const MiniGameScreen()),
+                  );
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: const Text('Hakkında'),
