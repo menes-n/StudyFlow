@@ -267,11 +267,9 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                         // Optional subtle grid background (not each cell widget heavy)
                         // Draw snake segments and apple as positioned widgets
 
-                        // Apple
+                        // Apple (discrete position)
                         stackChildren.add(
-                          AnimatedPositioned(
-                            duration: tickDuration,
-                            curve: Curves.linear,
+                          Positioned(
                             left: _apple.y * cellW + cellMargin,
                             top: _apple.x * cellH + cellMargin,
                             width: cellW - cellMargin * 2,
@@ -296,9 +294,7 @@ class _MiniGameScreenState extends State<MiniGameScreen> {
                           final seg = _snake[i];
                           final isHead = i == 0;
                           stackChildren.add(
-                            AnimatedPositioned(
-                              duration: tickDuration,
-                              curve: Curves.linear,
+                            Positioned(
                               left: seg.y * cellW + cellMargin,
                               top: seg.x * cellH + cellMargin,
                               width: cellW - cellMargin * 2,
