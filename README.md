@@ -84,12 +84,4 @@
 
  ---
 
- ## CI / Öneriler
-
- Basit bir GitHub Actions iş akışı önerisi:
- - `flutter analyze` çalıştır
- - `flutter test` (testler eklendiğinde)
-
- ---
-
 Teşekkürler — iyi çalışmalar ve odaklanmalar!
