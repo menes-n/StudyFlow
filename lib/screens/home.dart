@@ -427,9 +427,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   navigator.pop();
                   await Future.delayed(const Duration(milliseconds: 200));
                   if (!mounted) return;
-                  navigator.push(
+                  await navigator.push(
                     MaterialPageRoute(builder: (_) => const ProfileScreen()),
                   );
+                  if (!mounted) return;
+                  await _loadUserInfo();
                 },
               ),
               ListTile(
@@ -857,82 +859,94 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
             subtitle: (task.notes != null && task.notes!.isNotEmpty)
                 ? Text(task.notes!)
                 : null,
-            trailing: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (widget.showCompleteButton)
-                  IconButton(
-                    icon: const Icon(Icons.check, color: Colors.green),
-                    onPressed: () async {
-                      final updatedTask = Task(
-                        id: task.id,
-                        title: task.title,
-                        notes: task.notes,
-                        completed: true,
-                        dueDateMillis: task.dueDateMillis,
-                        priority: task.priority,
-                        blockIds: task.blockIds,
-                        pomodoroMinutes: task.pomodoroMinutes,
-                        pomodoroSessionsCompleted:
-                            task.pomodoroSessionsCompleted,
-                        lastSessionMillis: task.lastSessionMillis,
-                      );
-                      await app.updateTask(updatedTask);
-                    },
-                  )
-                else
-                  IconButton(
-                    icon: const Icon(Icons.undo, color: Colors.orange),
-                    onPressed: () async {
-                      final updatedTask = Task(
-                        id: task.id,
-                        title: task.title,
-                        notes: task.notes,
-                        completed: false,
-                        dueDateMillis: task.dueDateMillis,
-                        priority: task.priority,
-                        blockIds: task.blockIds,
-                        pomodoroMinutes: task.pomodoroMinutes,
-                        pomodoroSessionsCompleted:
-                            task.pomodoroSessionsCompleted,
-                        lastSessionMillis: task.lastSessionMillis,
-                      );
-                      await app.updateTask(updatedTask);
-                    },
-                  ),
-                const SizedBox(height: 6),
-                if (!task.completed)
-                  IconButton(
-                    icon: const Icon(Icons.timer, color: Colors.purple),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => AdHocPomodoroScreen(task: task),
+            trailing: PopupMenuButton<int>(
+              icon: const Icon(Icons.more_vert),
+              tooltip: 'Aksiyonlar',
+              onSelected: (value) async {
+                switch (value) {
+                  case 1:
+                    final updatedTask = Task(
+                      id: task.id,
+                      title: task.title,
+                      notes: task.notes,
+                      completed: !task.completed,
+                      dueDateMillis: task.dueDateMillis,
+                      priority: task.priority,
+                      blockIds: task.blockIds,
+                      pomodoroMinutes: task.pomodoroMinutes,
+                      pomodoroSessionsCompleted: task.pomodoroSessionsCompleted,
+                      lastSessionMillis: task.lastSessionMillis,
+                    );
+                    await app.updateTask(updatedTask);
+                    break;
+                  case 2:
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => AdHocPomodoroScreen(task: task),
+                      ),
+                    );
+                    break;
+                  case 3:
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => EditTaskScreen(task: task),
+                      ),
+                    );
+                    break;
+                  case 4:
+                    app.deleteTask(task.id);
+                    break;
+                }
+              },
+              itemBuilder: (ctx) {
+                return <PopupMenuEntry<int>>[
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Row(
+                      children: [
+                        Icon(
+                          task.completed ? Icons.undo : Icons.check,
+                          color: task.completed ? Colors.orange : Colors.green,
                         ),
-                      );
-                    },
+                        const SizedBox(width: 8),
+                        Text(task.completed ? 'Geri Al' : 'Tamamla'),
+                      ],
+                    ),
                   ),
-                const SizedBox(height: 6),
-                if (!task.completed)
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditTaskScreen(task: task),
-                        ),
-                      );
-                    },
-                  )
-                else
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      app.deleteTask(task.id);
-                    },
+                  if (!task.completed)
+                    PopupMenuItem<int>(
+                      value: 2,
+                      child: Row(
+                        children: const [
+                          Icon(Icons.timer, color: Colors.purple),
+                          SizedBox(width: 8),
+                          Text('Pomodoro Başlat'),
+                        ],
+                      ),
+                    ),
+                  if (!task.completed)
+                    PopupMenuItem<int>(
+                      value: 3,
+                      child: Row(
+                        children: const [
+                          Icon(Icons.edit, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Düzenle'),
+                        ],
+                      ),
+                    ),
+                  PopupMenuItem<int>(
+                    value: 4,
+                    child: Row(
+                      children: const [
+                        Icon(Icons.delete, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Sil'),
+                      ],
+                    ),
                   ),
-              ],
+                ];
+              },
             ),
           ),
         ),

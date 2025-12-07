@@ -161,15 +161,8 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    '© 2025 StudyFlow',
+                    '2025 StudyFlow',
                     style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Tüm hakları saklıdır',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                   ),
                 ],
               ),
