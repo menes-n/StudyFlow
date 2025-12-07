@@ -359,6 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Body içinde görev bölümleri (bugün, yarın, hafta vb.) render edilir
     final app = context.watch<AppState>();
     final now = DateTime.now();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final today = DateTime(now.year, now.month, now.day);
 
     final tomorrow = today.add(const Duration(days: 1));
@@ -408,13 +409,42 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               UserAccountsDrawerHeader(
-                accountName: Text(_username),
-                accountEmail: Text(_email),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? [
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.primaryContainer,
+                          ]
+                        : [
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.secondary,
+                          ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                accountName: Text(
+                  _username,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                accountEmail: Text(
+                  _email,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
                 currentAccountPicture: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  child: const Icon(
+                  backgroundColor: isDark
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.onPrimary.withValues(alpha: 0.12)
+                      : Colors.white.withValues(alpha: 0.12),
+                  child: Icon(
                     Icons.person,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 60,
                   ),
                 ),
@@ -586,10 +616,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.secondary,
-                          ],
+                          colors: isDark
+                              ? [
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.secondaryContainer,
+                                ]
+                              : [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary,
+                                ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -607,13 +646,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.12),
+                              color: isDark
+                                  ? Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer
+                                        .withValues(alpha: 0.12)
+                                  : Colors.white.withValues(alpha: 0.12),
                               shape: BoxShape.circle,
                             ),
                             padding: const EdgeInsets.all(8),
-                            child: const Icon(
+                            child: Icon(
                               Icons.videogame_asset,
-                              color: Colors.white,
+                              color: isDark
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.onPrimary,
                               size: 28,
                             ),
                           ),
@@ -625,7 +671,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'YILAN OYUNU',
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
-                                      color: Colors.white,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -633,7 +683,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Kısa bir mola ver — oyun oyna',
                                 style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: Colors.white70),
+                                    ?.copyWith(
+                                      color: isDark
+                                          ? Colors.white70
+                                          : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                                .withValues(alpha: 0.7),
+                                    ),
                               ),
                             ],
                           ),
@@ -859,93 +916,119 @@ class _ExpandableSectionTileState extends State<_ExpandableSectionTile> {
             subtitle: (task.notes != null && task.notes!.isNotEmpty)
                 ? Text(task.notes!)
                 : null,
-            trailing: PopupMenuButton<int>(
-              icon: const Icon(Icons.more_vert),
-              tooltip: 'Aksiyonlar',
-              onSelected: (value) async {
-                switch (value) {
-                  case 1:
-                    final updatedTask = Task(
-                      id: task.id,
-                      title: task.title,
-                      notes: task.notes,
-                      completed: !task.completed,
-                      dueDateMillis: task.dueDateMillis,
-                      priority: task.priority,
-                      blockIds: task.blockIds,
-                      pomodoroMinutes: task.pomodoroMinutes,
-                      pomodoroSessionsCompleted: task.pomodoroSessionsCompleted,
-                      lastSessionMillis: task.lastSessionMillis,
+            trailing: Builder(
+              builder: (ctx) {
+                return IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  tooltip: 'Aksiyonlar',
+                  onPressed: () async {
+                    final RenderBox button =
+                        ctx.findRenderObject() as RenderBox;
+                    final RenderBox overlay =
+                        Overlay.of(ctx).context.findRenderObject() as RenderBox;
+                    final Offset topLeft = button.localToGlobal(Offset.zero);
+                    final Offset bottomRight = button.localToGlobal(
+                      button.size.bottomRight(Offset.zero),
                     );
-                    await app.updateTask(updatedTask);
-                    break;
-                  case 2:
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => AdHocPomodoroScreen(task: task),
-                      ),
+                    final RelativeRect position = RelativeRect.fromRect(
+                      Rect.fromPoints(topLeft, bottomRight),
+                      Offset.zero & overlay.size,
                     );
-                    break;
-                  case 3:
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => EditTaskScreen(task: task),
-                      ),
-                    );
-                    break;
-                  case 4:
-                    app.deleteTask(task.id);
-                    break;
-                }
-              },
-              itemBuilder: (ctx) {
-                return <PopupMenuEntry<int>>[
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        Icon(
-                          task.completed ? Icons.undo : Icons.check,
-                          color: task.completed ? Colors.orange : Colors.green,
+
+                    final int? selected = await showMenu<int>(
+                      context: ctx,
+                      position: position,
+                      items: <PopupMenuEntry<int>>[
+                        PopupMenuItem<int>(
+                          value: 1,
+                          child: Row(
+                            children: [
+                              Icon(
+                                task.completed ? Icons.undo : Icons.check,
+                                color: task.completed
+                                    ? Colors.orange
+                                    : Colors.green,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(task.completed ? 'Geri Al' : 'Tamamla'),
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Text(task.completed ? 'Geri Al' : 'Tamamla'),
+                        if (!task.completed)
+                          const PopupMenuItem<int>(
+                            value: 2,
+                            child: Row(
+                              children: [
+                                Icon(Icons.timer, color: Colors.purple),
+                                SizedBox(width: 8),
+                                Text('Pomodoro Başlat'),
+                              ],
+                            ),
+                          ),
+                        if (!task.completed)
+                          const PopupMenuItem<int>(
+                            value: 3,
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Düzenle'),
+                              ],
+                            ),
+                          ),
+                        const PopupMenuItem<int>(
+                          value: 4,
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Colors.red),
+                              SizedBox(width: 8),
+                              Text('Sil'),
+                            ],
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                  if (!task.completed)
-                    PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: const [
-                          Icon(Icons.timer, color: Colors.purple),
-                          SizedBox(width: 8),
-                          Text('Pomodoro Başlat'),
-                        ],
-                      ),
-                    ),
-                  if (!task.completed)
-                    PopupMenuItem<int>(
-                      value: 3,
-                      child: Row(
-                        children: const [
-                          Icon(Icons.edit, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Düzenle'),
-                        ],
-                      ),
-                    ),
-                  PopupMenuItem<int>(
-                    value: 4,
-                    child: Row(
-                      children: const [
-                        Icon(Icons.delete, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Sil'),
-                      ],
-                    ),
-                  ),
-                ];
+                    );
+
+                    if (selected == null) return;
+                    switch (selected) {
+                      case 1:
+                        final updatedTask = Task(
+                          id: task.id,
+                          title: task.title,
+                          notes: task.notes,
+                          completed: !task.completed,
+                          dueDateMillis: task.dueDateMillis,
+                          priority: task.priority,
+                          blockIds: task.blockIds,
+                          pomodoroMinutes: task.pomodoroMinutes,
+                          pomodoroSessionsCompleted:
+                              task.pomodoroSessionsCompleted,
+                          lastSessionMillis: task.lastSessionMillis,
+                        );
+                        await app.updateTask(updatedTask);
+                        break;
+                      case 2:
+                        if (!mounted) return;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => AdHocPomodoroScreen(task: task),
+                          ),
+                        );
+                        break;
+                      case 3:
+                        if (!mounted) return;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EditTaskScreen(task: task),
+                          ),
+                        );
+                        break;
+                      case 4:
+                        await app.deleteTask(task.id);
+                        break;
+                    }
+                  },
+                );
               },
             ),
           ),
